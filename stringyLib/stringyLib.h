@@ -7,6 +7,4 @@
 
 #import <Foundation/Foundation.h>
 
-@interface stringyLib : NSObject
-
-@end
+NSString *ZCFstringCreateWithFormat(NS_VALID_UNTIL_END_OF_SCOPE NSString *format, ...);
