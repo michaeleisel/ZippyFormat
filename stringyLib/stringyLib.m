@@ -41,7 +41,7 @@ static inline void stringEnsureExtraCapacity(String *string, NSInteger length) {
     if (newLength <= string->capacity) {
         return;
     }
-    NSInteger newCapacity = string->length * 2;
+    NSInteger newCapacity = length * 2;
     char *newBuffer = malloc(newCapacity);
     memcpy(newBuffer, string->buffer, string->length);
     string->capacity = newCapacity;
@@ -49,7 +49,7 @@ static inline void stringEnsureExtraCapacity(String *string, NSInteger length) {
     if (string->isStack) {
         string->isStack = NO;
     } else {
-        free(string);
+        free(string->buffer);
     }
 }
 
@@ -144,13 +144,13 @@ static void writeFloat(String *string, const char *formatString, float f) {
     // Floats can translate to really big strings, so just use a reasonably small buffer to start with
     int size = 64;
     char smallBuffer[size];
-    int bytesNeeded = snprintf(smallBuffer, sizeof(smallBuffer), "%f", f);
+    int bytesNeeded = snprintf(smallBuffer, sizeof(smallBuffer), formatString, f);
     if (bytesNeeded <= sizeof(smallBuffer) - 1) {
         appendString(string, smallBuffer, bytesNeeded);
         return;
     }
     char largeBuffer[bytesNeeded + 1];
-    snprintf(largeBuffer, sizeof(largeBuffer), "%f", f);
+    snprintf(largeBuffer, sizeof(largeBuffer), formatString, f);
     appendString(string, largeBuffer, bytesNeeded);
 }
 
@@ -158,13 +158,13 @@ static void writeDouble(String *string, const char *formatString, double f) {
     // Floats can translate to really big strings, so just use a reasonably small buffer to start with
     int size = 64;
     char smallBuffer[size];
-    int bytesNeeded = snprintf(smallBuffer, sizeof(smallBuffer), "%lf", f);
+    int bytesNeeded = snprintf(smallBuffer, sizeof(smallBuffer), formatString, f);
     if (bytesNeeded <= sizeof(smallBuffer) - 1) {
         appendString(string, smallBuffer, bytesNeeded);
         return;
     }
     char largeBuffer[bytesNeeded + 1];
-    snprintf(largeBuffer, sizeof(largeBuffer), "%lf", f);
+    snprintf(largeBuffer, sizeof(largeBuffer), formatString, f);
     appendString(string, largeBuffer, bytesNeeded);
 }
 
