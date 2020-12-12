@@ -8,3 +8,5 @@
 #import <Foundation/Foundation.h>
 
 NSString *ZCFstringCreateWithFormat(NS_VALID_UNTIL_END_OF_SCOPE NSString *format, ...);
+
+NSString *smallFormattedString();

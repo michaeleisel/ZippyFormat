@@ -53,6 +53,14 @@ static inline void stringEnsureExtraCapacity(String *string, NSInteger length) {
     }
 }
 
+#define APPEND_LITERAL(string, literal) \
+do { \
+_Static_assert(sizeof(literal) != 8, "literal looks like a pointer"); \
+_Static_assert(sizeof(literal) != 0, "zero-length literal not allowed"); \
+appendString(string, literal, sizeof(literal) - 1); \
+} \
+while (0)
+
 static void appendString(String *string, const char *src, NSInteger length) {
     stringEnsureExtraCapacity(string, length);
     memcpy(string->buffer + string->length, src, length);
@@ -96,16 +104,7 @@ static void appendOctNumber(String *string, uint64_t num, int length, bool lower
     appendBinaryNumber(string, num, 3, 0x7, length, lowercase, isNegative);
 }
 
-static uint64_t extractInt(va_list *args, int size, bool treatAsSigned, bool *isNegative) {
-    uint64_t raw = 0;
-    if (size == 1 || size == 2 || size == 4) {
-        raw = va_arg(*args, unsigned int);
-    } else if (size == 8) {
-        raw = va_arg(*args, uint64_t);
-    } else {
-        abort();
-    }
-
+static uint64_t printableInt(uint64_t raw, int size, bool treatAsSigned, bool *isNegative) {
     if (treatAsSigned && raw & (1ULL << (size * 8 - 1))) {
         *isNegative = true;
         raw = (~raw) + 1;
@@ -118,6 +117,19 @@ static uint64_t extractInt(va_list *args, int size, bool treatAsSigned, bool *is
         raw = raw & ((1ULL << (size * 8)) - 1);
     }
     return raw;
+}
+
+static uint64_t extractInt(va_list *args, int size, bool treatAsSigned, bool *isNegative) {
+    uint64_t raw = 0;
+    if (size == 1 || size == 2 || size == 4) {
+        raw = va_arg(*args, unsigned int);
+    } else if (size == 8) {
+        raw = va_arg(*args, uint64_t);
+    } else {
+        abort();
+    }
+
+    return printableInt(raw, size, treatAsSigned, isNegative);
 }
 
 static void writeInt(String *string, uint64_t num, BOOL isNegative) {
@@ -218,8 +230,6 @@ static bool writeFloatIfPossible(String *string, const char **formatPtr, va_list
     }
 }
 
-// todo: test float-to-double promotion and long doubles
-
 static bool writeIntIfPossible(String *string, const char **formatPtr, va_list *args) {
     int skip = 1;
     int size = 0;
@@ -289,11 +299,25 @@ static bool writeIntIfPossible(String *string, const char **formatPtr, va_list *
     }
 }
 
-// todo: check nan and INF, check for bools
-
 static really_inline void appendNSString(String *string, NSString *nsString) {
     const char *cString = [nsString UTF8String];
     appendString(string, cString, strlen(cString));
+}
+
+static inline int sizeForTypeChar(char typeChar) {
+    switch (tolower(typeChar)) {
+        case 'c':
+            return 1;
+        case 's':
+            return 2;
+        case 'i':
+            return 4;
+        case 'l':
+        case 'q':
+            return 8;
+    }
+    assert(false);
+    return 0;
 }
 
 static really_inline void appendNSNumber(String *string, NSNumber *number) {
@@ -301,11 +325,14 @@ static really_inline void appendNSNumber(String *string, NSNumber *number) {
     char typeChar = typeStr[0];
     if (typeChar != '\0' && typeStr[1] == 0) {
         if (typeChar == 'C' || typeChar == 'I' || typeChar == 'S' || typeChar == 'L' || typeChar == 'Q') {
-            writeInt(string, [number unsignedLongLongValue], false);
+            bool isNegative = false;
+            uint64_t pi = printableInt([number unsignedLongLongValue], sizeForTypeChar(typeChar), false, &isNegative);
+            writeInt(string, pi, isNegative);
             return;
         } else if (typeChar == 'c' || typeChar == 'i' || typeChar == 's' || typeChar == 'l' || typeChar == 'q') {
-            long long ll = [number longLongValue];
-            writeInt(string, ll, ll < 0);
+            bool isNegative = false;
+            uint64_t pi = printableInt((uint64_t)[number longLongValue], sizeForTypeChar(typeChar), true, &isNegative);
+            writeInt(string, pi, isNegative);
             return;
         } else if (typeChar == 'd' || typeChar == 'f') {
             writeDouble(string, "%g", [number doubleValue]);
@@ -315,14 +342,14 @@ static really_inline void appendNSNumber(String *string, NSNumber *number) {
     appendNSString(string, [number description]);
 }
 
-static really_inline void appendNSArray(String *string, NSArray *array);
-static really_inline void appendNSDictionary(String *string, NSDictionary *dictionary);
+static really_inline void appendNSArray(String *string, NSArray *array, int nestLevel);
+static really_inline void appendNSDictionary(String *string, NSDictionary *dictionary, int nestLevel);
 
-static void appendNSObject(String *string, id object) {
+static void appendNSObject(String *string, id object, int nestLevel) {
     if ([object isKindOfClass:[NSArray class]]) {
-        appendNSArray(string, object);
+        appendNSArray(string, object, nestLevel);
     } else if ([object isKindOfClass:[NSDictionary class]]) {
-        appendNSDictionary(string, object);
+        appendNSDictionary(string, object, nestLevel);
     } else if ([object isKindOfClass:[NSString class]]) {
         appendNSString(string, object);
     } else if ([object isKindOfClass:[NSNumber class]]) {
@@ -333,42 +360,55 @@ static void appendNSObject(String *string, id object) {
     // More can always be added here, such as for NSData
 }
 
-static really_inline void appendNSDictionary(String *string, NSDictionary *dictionary) {
-    appendString(string, "{\n", 2);
-    [dictionary enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        appendNSObject(string, key);
-        appendChar(string, ':');
-        appendChar(string, ' ');
-        appendNSObject(string, obj);
-        appendChar(string, '\n');
-    }];
-    appendString(string, "\n]", 2);
+static really_inline void appendNesting(String *string, int nestLevel) {
+    for (int i = 0; i < nestLevel + 1; i++) {
+        APPEND_LITERAL(string, "    ");
+    }
 }
 
-static really_inline void appendNSArray(String *string, NSArray *array) {
-    appendString(string, "[\n", 2);
+static really_inline void appendNSDictionary(String *string, NSDictionary *dictionary, int nestLevel) {
+    appendNesting(string, nestLevel - 1);
+    appendString(string, "{\n", 2);
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        appendNesting(string, nestLevel);
+        appendNSObject(string, key, nestLevel + 1);
+        APPEND_LITERAL(string, " = ");
+        appendNSObject(string, obj, nestLevel + 1);
+        APPEND_LITERAL(string, ";\n");
+    }];
+    appendNesting(string, nestLevel - 1);
+    appendChar(string, '}');
+}
+
+static really_inline void appendNSArray(String *string, NSArray *array, int nestLevel) {
+    appendNesting(string, nestLevel - 1);
+    APPEND_LITERAL(string, "(\n");
+    NSInteger i = 0;
+    NSInteger count = [array count];
+    // Use fast enumeration, with our own index, in case fast enumeration is better optimized, e.g. for retain/release
     for (id element in array) {
-        appendNSObject(string, element);
+        appendNesting(string, nestLevel);
+        appendNSObject(string, element, nestLevel + 1);
+        if (i < count - 1) {
+            appendChar(string, ',');
+        }
         appendChar(string, '\n');
+        i++;
     }
-    appendString(string, "\n]", 2);
+    appendNesting(string, nestLevel - 1);
+    appendChar(string, ')');
 }
 
 static void appendObject(String *string, va_list *args) {
     id object = va_arg(*args, id);
-    appendNSObject(string, object);
+    appendNSObject(string, object, 0);
 }
-
-// todo: handle %zx
 
 NSString *ZCFstringCreateWithFormat(NS_VALID_UNTIL_END_OF_SCOPE NSString *format, ...) {
     va_list args;
     va_list argsCopy;
     va_start(args, format);
     va_copy(argsCopy, args);
-    //const char *cString = CFStringGetCStringPtr(format, kCFStringEncodingASCII);
-    //char cString[64] = {0};
-    //CFStringGetCString(format, cString, 64, kCFStringEncodingUTF8);
     const char *cString = [format UTF8String];
     NSInteger cStringLength = strlen(cString);
     const char *curr = cString;
@@ -387,24 +427,24 @@ NSString *ZCFstringCreateWithFormat(NS_VALID_UNTIL_END_OF_SCOPE NSString *format
         switch (*curr) {
             case '@':
                 appendObject(&output, &args);
+                curr++;
                 break;
             case '%':
                 appendChar(&output, '%');
+                curr++;
                 break;
             case 'C': {
                 output.useApple = YES;
+                curr++;
             } break;
             case 's': {
                 const char *str = va_arg(args, char *);
                 appendString(&output, str, strlen(str));
+                curr++;
             } break;
             case 'S': {
                 output.useApple = YES;
-            } break;
-            case 'p': {
-                const void *ptr = va_arg(args, void *);
-                ptrdiff_t num = (ptrdiff_t)ptr;
-                appendHexNumber(&output, num, 8, true, false);
+                curr++;
             } break;
             default: {
                 bool appendDone = writeIntIfPossible(&output, &curr, &args);
@@ -425,7 +465,6 @@ NSString *ZCFstringCreateWithFormat(NS_VALID_UNTIL_END_OF_SCOPE NSString *format
         return [[NSString alloc] initWithFormat:format arguments:argsCopy];
     }
     va_end(argsCopy);
-    // todo: are these strings marked ascii for swift?
     if (output.isStack) {
         return CFBridgingRelease(CFStringCreateWithBytes(kCFAllocatorDefault, (UInt8 *)output.buffer, output.length, kCFStringEncodingUTF8, NO));
     } else {
@@ -433,14 +472,6 @@ NSString *ZCFstringCreateWithFormat(NS_VALID_UNTIL_END_OF_SCOPE NSString *format
     }
 }
 
-/*int ZCFstringCreateWithFormat(CFStringRef string) {
-    int sum = 0;
-    CFIndex length = CFStringGetLength(string);
-    CFStringInlineBuffer buffer = {0};
-    CFStringInitInlineBuffer(string, &buffer, CFRangeMake(0, length));
-    for (int i = 0; i < length; i++) {
-        sum += CFStringGetCharacterFromInlineBuffer(&buffer, i);
-    }
-    return sum;
-}*/
-
+NSString *smallFormattedString() {
+    return ZCFstringCreateWithFormat(@"%@", @"foo");
+}

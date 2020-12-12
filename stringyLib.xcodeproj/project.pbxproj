@@ -11,6 +11,7 @@
 		F33CAA102572BDA2004543BE /* stringyLib.m in Sources */ = {isa = PBXBuildFile; fileRef = F33CAA0F2572BDA2004543BE /* stringyLib.m */; };
 		F33CAA1E2572BDC9004543BE /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = F33CAA1D2572BDC9004543BE /* Tests.m */; };
 		F33CAA202572BDC9004543BE /* libstringyLib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F33CAA0A2572BDA2004543BE /* libstringyLib.dylib */; };
+		F33CAA2A2572FE45004543BE /* SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33CAA292572FE45004543BE /* SwiftTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +31,8 @@
 		F33CAA1B2572BDC9004543BE /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F33CAA1D2572BDC9004543BE /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		F33CAA1F2572BDC9004543BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F33CAA282572FE44004543BE /* Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Bridging-Header.h"; sourceTree = "<group>"; };
+		F33CAA292572FE45004543BE /* SwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +86,8 @@
 			children = (
 				F33CAA1D2572BDC9004543BE /* Tests.m */,
 				F33CAA1F2572BDC9004543BE /* Info.plist */,
+				F33CAA292572FE45004543BE /* SwiftTests.swift */,
+				F33CAA282572FE44004543BE /* Tests-Bridging-Header.h */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -149,6 +154,7 @@
 					};
 					F33CAA1A2572BDC9004543BE = {
 						CreatedOnToolsVersion = 12.1;
+						LastSwiftMigration = 1210;
 					};
 				};
 			};
@@ -195,6 +201,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F33CAA1E2572BDC9004543BE /* Tests.m in Sources */,
+				F33CAA2A2572FE45004543BE /* SwiftTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,6 +356,7 @@
 		F33CAA242572BDC9004543BE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = F53BR3BJXH;
@@ -360,12 +368,16 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = eiselz.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Tests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
 		F33CAA252572BDC9004543BE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = F53BR3BJXH;
@@ -377,6 +389,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = eiselz.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Tests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
