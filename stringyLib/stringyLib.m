@@ -7,9 +7,10 @@
 
 #import "stringyLib.h"
 
-#include <stdio.h>
-#include <Foundation/Foundation.h>
-#include <QuartzCore/QuartzCore.h>
+#import <stdio.h>
+#import <Foundation/Foundation.h>
+#import <QuartzCore/QuartzCore.h>
+#import <objc/runtime.h>
 
 #ifndef __LP64__
 This is only meant for 64-bit systems
@@ -180,184 +181,40 @@ static void writeDouble(String *string, const char *formatString, double f) {
     appendString(string, largeBuffer, bytesNeeded);
 }
 
-static void writeLongDouble(String *string, const char *formatString, long double f) {
-    // Floats can translate to really big strings, so just use a reasonably small buffer to start with
-    int size = 64;
-    char smallBuffer[size];
-    int bytesNeeded = snprintf(smallBuffer, sizeof(smallBuffer), formatString, f);
-    if (bytesNeeded <= sizeof(smallBuffer) - 1) {
-        appendString(string, smallBuffer, bytesNeeded);
-        return;
-    }
-    char largeBuffer[bytesNeeded + 1];
-    snprintf(largeBuffer, sizeof(largeBuffer), "%Lf", f);
-    appendString(string, largeBuffer, bytesNeeded);
-}
-
-static bool writeFloatIfPossible(String *string, const char **formatPtr, va_list *args) {
-    char firstChar = **formatPtr;
-    char floatFormatString[4] = {0};
-    int floatFormatStringIdx = 0;
-    floatFormatString[floatFormatStringIdx++] = '%';
-    char c = '\0';
-    if (firstChar == 'l' || firstChar == 'L') {
-        floatFormatString[floatFormatStringIdx++] = firstChar;
-        c = (*formatPtr)[1];
-    } else {
-        c = firstChar;
-    }
-    switch (tolower(c)) {
-        case 'a':
-        case 'e':
-        case 'f':
-        case 'g':
-            floatFormatString[floatFormatStringIdx++] = c;
-            if (firstChar == 'l') {
-                writeDouble(string, floatFormatString, va_arg(*args, double));
-                *formatPtr += 2;
-            } else if (firstChar == 'L') {
-                writeLongDouble(string, floatFormatString, va_arg(*args, long double));
-                *formatPtr += 2;
-            } else {
-                writeFloat(string, floatFormatString, va_arg(*args, double));
-                *formatPtr += 1;
-            }
-            return true;
-            break;
-        default:
-            return false;
-            break;
-    }
-}
-
-static inline void skipFlags(const char **formatPtr) {
+static bool writeNumberIfPossible(String *string, const char **formatPtr, va_list *args) {
+    const char *format = *formatPtr;
     while (true) {
-        char c = **formatPtr;
-        if (!(c == '-' || c == '+' || c == ' ' || c == '#' || c == '0')) {
-            break;
-        }
-        (*formatPtr)++;
-    }
-}
-
-static inline void skipNumbers(const char **formatPtr) {
-    while (true) {
-        char c = **formatPtr;
-        if (!('0' <= c && c <= '9')) {
-            break;
-        }
-        (*formatPtr)++;
-    }
-}
-
-static inline void skipWidth(const char **formatPtr) {
-    skipNumbers(formatPtr);
-}
-
-static inline void skipPrecision(const char **formatPtr) {
-    skipNumbers(formatPtr);
-}
-
-static void writeNumberWithPrintf(String *string, const char )
-
-static bool writeIntIfPossible(String *string, const char **formatPtr, va_list *args) {
-    const char *start = *formatPtr;
-    if (**formatPtr == '$') {
-        // Positional arguments not supported
-        string->useApple = true;
-        return true;
-    }
-    skipFlags(formatPtr);
-    // Width
-    if (**formatPtr == '*') {
-        // Not supported
-        string->useApple = true;
-        return true;
-    }
-    skipNumbers(formatPtr);
-    if (**formatPtr == '.') {
-        // Precision
-        char next = (*formatPtr)[1];
-        if (next == '*') {
-            // Not supported
+        char c = *format;
+        if (c == '$' || c == '*' || c == '\0') {
+            // Positional and * arguments not supported, and '\0' indicates malformed string
             string->useApple = true;
             return true;
         }
-        skipNumbers(formatPtr);
-    }
-    if (**formatPtr == 'L') {
-    case 'a':
-    case 'e':
-    case 'f':
-    case 'g':
-    }
-    int skip = 1;
-    int size = 0;
-    switch (**formatPtr) {
-        case 'h':
-            if ((*formatPtr)[1] == 'h') {
-                skip++;
-                size = sizeof(char);
-            } else {
-                size = sizeof(short);
+        char lower = tolower(c);
+        if (lower == 'a' || lower == 'e' || lower == 'f' || lower == 'g' || lower == 'd' || lower == 'i' || lower == 'u' || lower == 'o' || lower == 'x' || lower == 'c' || lower == 'p' || lower == 'n') {
+            if (lower == 'n') {
+                va_arg(*args, void *);
+                *formatPtr = format + 1;
+                return true;
             }
-            break;
-        case 'l':
-            if ((*formatPtr)[1] == 'l') {
-                skip++;
-                size = sizeof(long long);
+            long length = format - (*formatPtr) + 2;
+            char tempFormat[length];
+            memcpy(tempFormat, (*formatPtr) - 1, length);
+            char shortDestination[64];
+            int shortDestinationLength = sizeof(shortDestination);
+            int needed = vsnprintf(shortDestination, shortDestinationLength, tempFormat, *args);
+            if (needed < shortDestinationLength) { // If needed == destinationLength, the null terminator is the issue
+                appendString(string, shortDestination, needed);
+                *formatPtr = format + 1;
             } else {
-                size = sizeof(long);
+                // Number was too large. This is pretty exceptional, i.e. a giant float
+                string->useApple = true;
             }
-            break;
-        case 'q':
-            size = sizeof(long long);
-            break;
-        case 'z':
-            size = sizeof(size_t);
-            break;
-        case 't':
-            size = sizeof(ptrdiff_t);
-            break;
-        case 'j':
-            size = sizeof(intmax_t);
-            break;
-        default:
-            size = sizeof(int32_t);
-            skip = 0;
+            return true;
+        }
+        format++;
     }
-
-    bool isNegative = false;
-    (*formatPtr) += skip;
-    char c = (*formatPtr)[skip];
-    switch (tolower(c)) {
-        case 'd': {
-            uint64_t num = extractInt(args, size, true /* treatAsSigned */, &isNegative);
-            writeInt(string, num, isNegative);
-            (*formatPtr) += skip + 1;
-            return true;
-        } break;
-        case 'u': {
-            uint64_t num = extractInt(args, size, false /* treatAsSigned */, &isNegative);
-            writeInt(string, num, isNegative);
-            (*formatPtr) += skip + 1;
-            return true;
-        } break;
-        case 'x': {
-            uint64_t num = extractInt(args, size, false /* treatAsSigned */, &isNegative);
-            appendHexNumber(string, num, size, c == 'x', isNegative);
-            (*formatPtr) += skip + 1;
-            return true;
-        } break;
-        case 'o': {
-            uint64_t num = extractInt(args, size, false /* treatAsSigned */, &isNegative);
-            appendOctNumber(string, num, size, c == 'o', isNegative);
-            (*formatPtr) += skip + 1;
-            return true;
-        } break;
-        default:
-            return false;
-    }
+    return false;
 }
 
 static really_inline void appendNSString(String *string, NSString *nsString) {
@@ -407,13 +264,22 @@ static really_inline void appendNSArray(String *string, NSArray *array, int nest
 static really_inline void appendNSDictionary(String *string, NSDictionary *dictionary, int nestLevel);
 
 static void appendNSObject(String *string, id object, int nestLevel) {
-    if ([object isKindOfClass:[NSArray class]]) {
+    Class nsObjectClass = [NSObject class];
+    Class nearTopClass = [object class];
+    while (YES) {
+        Class superclass = class_getSuperclass(nearTopClass);
+        if (superclass == nsObjectClass) {
+            break;
+        }
+        nearTopClass = superclass;
+    }
+    if (nearTopClass == [NSArray class]) {
         appendNSArray(string, object, nestLevel);
-    } else if ([object isKindOfClass:[NSDictionary class]]) {
+    } else if (nearTopClass == [NSDictionary class]) {
         appendNSDictionary(string, object, nestLevel);
-    } else if ([object isKindOfClass:[NSString class]]) {
+    } else if (nearTopClass == [NSString class]) {
         appendNSString(string, object);
-    } else if ([object isKindOfClass:[NSNumber class]]) {
+    } else if (nearTopClass == [NSNumber class]) {
         appendNSNumber(string, object);
     } else {
         appendNSString(string, [object description]);
@@ -513,10 +379,8 @@ NSString *ZCFstringCreateWithFormat(NS_VALID_UNTIL_END_OF_SCOPE NSString *format
                 curr++;
             } break;
             default: {
-                bool appendDone = writeIntIfPossible(&output, &curr, &args);
-                if (!appendDone) {
-                    appendDone = writeFloatIfPossible(&output, &curr, &args);
-                }
+                // This function assumes it's at the end, cannot have any legitimate cases after it
+                bool appendDone = writeNumberIfPossible(&output, &curr, &args);
                 if (!appendDone) {
                     // Format string appears malformed, which is UB, but just match Apple's treatment of the UB
                     output.useApple = YES;

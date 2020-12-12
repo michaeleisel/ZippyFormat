@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F33CAA0E2572BDA2004543BE /* stringyLib.h in Headers */ = {isa = PBXBuildFile; fileRef = F33CAA0D2572BDA2004543BE /* stringyLib.h */; };
-		F33CAA102572BDA2004543BE /* stringyLib.m in Sources */ = {isa = PBXBuildFile; fileRef = F33CAA0F2572BDA2004543BE /* stringyLib.m */; };
+		F33CAA102572BDA2004543BE /* stringyLib.m in Sources */ = {isa = PBXBuildFile; fileRef = F33CAA0F2572BDA2004543BE /* stringyLib.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		F33CAA1E2572BDC9004543BE /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = F33CAA1D2572BDC9004543BE /* Tests.m */; };
 		F33CAA202572BDC9004543BE /* libstringyLib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F33CAA0A2572BDA2004543BE /* libstringyLib.dylib */; };
 		F33CAA2A2572FE45004543BE /* SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33CAA292572FE45004543BE /* SwiftTests.swift */; };
@@ -271,6 +271,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -323,6 +324,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
 			};
 			name = Release;

@@ -49,7 +49,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
 {
     ({
         long long count = 0;
-        TEST(@"%s%llnfoo%d", "quick", &count, 2);
+        TEST(@"%d%s%llnfoo%d", 2, "quick", &count, 2);
     });
     long long count1 = 1;
     [NSString stringWithFormat:@"%s%llnfoo", "quick", &count1];
@@ -193,7 +193,7 @@ do { \
         @autoreleasepool { \
             start1 = CACurrentMediaTime(); \
             for (int j = 0; j < limit; j++) { \
-                /*[NSString stringWithFormat:format, __VA_ARGS__];*/ \
+                [NSString stringWithFormat:format, __VA_ARGS__]; \
             } \
             end1 = CACurrentMediaTime(); \
         } \
@@ -230,48 +230,13 @@ extern CFStringEncoding __CFDefaultEightBitStringEncoding;
 
 - (void)testPerf
 {
-    //const char testStr[] = "the quick brown fox jumped over the lazy dog";
-    /*while (1) {
-        PERF_TEST2(CFStringCreateWithCString(NULL, testStr, kCFStringEncodingASCII));
-    }*/
-    /*PERF_TEST2(CFStringCreateWithCString(NULL, testStr, kCFStringEncodingASCII));
-    PERF_TEST2(CFStringCreateWithCString(NULL, testStr, kCFStringEncodingUTF8));
-    PERF_TEST2(CFStringCreateWithCString(NULL, testStr, kCFStringEncodingUnicode));
-    PERF_TEST2(CFStringCreateWithCString(NULL, testStr, __CFDefaultEightBitStringEncoding));
-    PERF_TEST2(CFStringCreateWithBytes(NULL, testStr, sizeof(testStr) - 1, kCFStringEncodingASCII, false));
-    PERF_TEST2(CFStringCreateWithBytes(NULL, testStr, sizeof(testStr) - 1, kCFStringEncodingUnicode, false));
-    PERF_TEST2(CFStringCreateWithBytes(NULL, testStr, sizeof(testStr) - 1, kCFStringEncodingUTF8, false));
-    PERF_TEST2(CFStringCreateWithBytes(NULL, testStr, sizeof(testStr) - 1, kCFStringEncodingMacRoman, false));
-    PERF_TEST2(CFStringCreateWithBytes(NULL, testStr, sizeof(testStr) - 1, kCFStringEncodingDOSLatin1, false));
-    unichar *test16Str = malloc(sizeof(testStr) * 2);
-    for (int i = 0; i < sizeof(testStr); i++) {
-        test16Str[i] = (unichar)testStr[i];
-    }
-    PERF_TEST2(CFStringCreateWithBytes(NULL, (UInt8 *)test16Str, (sizeof(testStr) - 1) * 2, kCFStringEncodingUTF16, false));
-    PERF_TEST2(CFStringCreateWithCharacters(NULL, test16Str, sizeof(testStr) - 1));
-    ({
-        CFStringRef cf = CFStringCreateWithCString(NULL, testStr, kCFStringEncodingASCII);
-        UInt8 buffer[500];
-        CFIndex len = 0;
-        CFStringGetPascalString(cf, buffer, 500, kCFStringEncodingASCII);
-        PERF_TEST2(CFStringCreateWithPascalString(NULL, buffer, kCFStringEncodingASCII));
-    });
-    PERF_TEST2(CFStringRef cf = CFStringCreateMutable(NULL, sizeof(testStr)));
-    PERF_TEST2(CFStringRef cf = CFStringCreateMutable(NULL, sizeof(testStr)); CFStringAppendCString(cf, testStr, kCFStringEncodingUTF8));*/
-    /*PERF_TEST(@"%@%@", @"1", @"2");
-    PERF_TEST(@"%@%@%@%@", @"1", @"2", @"3", @"4");
-    PERF_TEST(@"the %@ brown fox jumped over %@", @"quick", @"the lazy dog");
-    PERF_TEST(@"there are %@ dogs", @"3");
-    PERF_TEST(@"there are %@ dogs", @"3333333333333333333333333333333333333333333333333333333333333");
-    PERF_TEST(@"there are %@ dogs", @3);
-    PERF_TEST(@"there are %d dogs", 3);
-    PERF_TEST(@"there are %lf dogs", 3.1);
-    PERF_TEST(@"%@%@", @"the quick brown foxed jump over the", @"lazy dog");
-    // faster
-    PERF_TEST(@"%@%@", @"the", @"lazy d");
-    // slower
-    PERF_TEST(@"%@%@----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------", @"the quick brown foxed jump over the", @"lazy dog");
-    PERF_TEST(@"%@%@", @"the", @"lazy dog");*/
+    PERF_TEST(@"%d", 2);
+    PERF_TEST(@"%Lf", (long double)M_PI);
+    PERF_TEST(@"%@", @"short");
+    PERF_TEST(@"%@", @"the quick brown fox jumped over the lazy dog");
+    PERF_TEST(@"%@%@", @"the quick brown fox ", @"jumped over the lazy dog");
+    PERF_TEST(@"%s%s", "the quick brown fox ", "jumped over the lazy dog");
+    PERF_TEST(@"the quick brown fox jumped over %d lazy dogs", 2500);
 }
 
 @end
