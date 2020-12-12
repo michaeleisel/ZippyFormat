@@ -45,6 +45,19 @@ XCTAssert([expected isEqual:actual]); \
 
 const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEncoding, NSJapaneseEUCStringEncoding, NSUTF8StringEncoding, NSISOLatin1StringEncoding, NSSymbolStringEncoding, NSNonLossyASCIIStringEncoding, NSShiftJISStringEncoding, NSISOLatin2StringEncoding, NSUnicodeStringEncoding, NSWindowsCP1251StringEncoding, NSWindowsCP1252StringEncoding, NSWindowsCP1253StringEncoding, NSWindowsCP1254StringEncoding, NSWindowsCP1250StringEncoding, NSISO2022JPStringEncoding, NSMacOSRomanStringEncoding, NSUTF16StringEncoding, NSUTF16BigEndianStringEncoding, NSUTF16LittleEndianStringEncoding, NSUTF32StringEncoding, NSUTF32BigEndianStringEncoding, NSUTF32LittleEndianStringEncoding};
 
+- (void)testBytesWritten
+{
+    ({
+        long long count = 0;
+        TEST(@"%s%llnfoo%d", "quick", &count, 2);
+    });
+    long long count1 = 1;
+    [NSString stringWithFormat:@"%s%llnfoo", "quick", &count1];
+    long long count2 = 1;
+    ZCFstringCreateWithFormat(@"%s%llnfoo%d", "quick", &count2);
+    XCTAssert(count1 == count2);
+}
+
 - (void)testOther
 {
     TEST(@"%.02lf", (double)1.1);

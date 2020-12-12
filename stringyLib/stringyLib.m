@@ -230,7 +230,67 @@ static bool writeFloatIfPossible(String *string, const char **formatPtr, va_list
     }
 }
 
+static inline void skipFlags(const char **formatPtr) {
+    while (true) {
+        char c = **formatPtr;
+        if (!(c == '-' || c == '+' || c == ' ' || c == '#' || c == '0')) {
+            break;
+        }
+        (*formatPtr)++;
+    }
+}
+
+static inline void skipNumbers(const char **formatPtr) {
+    while (true) {
+        char c = **formatPtr;
+        if (!('0' <= c && c <= '9')) {
+            break;
+        }
+        (*formatPtr)++;
+    }
+}
+
+static inline void skipWidth(const char **formatPtr) {
+    skipNumbers(formatPtr);
+}
+
+static inline void skipPrecision(const char **formatPtr) {
+    skipNumbers(formatPtr);
+}
+
+static void writeNumberWithPrintf(String *string, const char )
+
 static bool writeIntIfPossible(String *string, const char **formatPtr, va_list *args) {
+    const char *start = *formatPtr;
+    if (**formatPtr == '$') {
+        // Positional arguments not supported
+        string->useApple = true;
+        return true;
+    }
+    skipFlags(formatPtr);
+    // Width
+    if (**formatPtr == '*') {
+        // Not supported
+        string->useApple = true;
+        return true;
+    }
+    skipNumbers(formatPtr);
+    if (**formatPtr == '.') {
+        // Precision
+        char next = (*formatPtr)[1];
+        if (next == '*') {
+            // Not supported
+            string->useApple = true;
+            return true;
+        }
+        skipNumbers(formatPtr);
+    }
+    if (**formatPtr == 'L') {
+    case 'a':
+    case 'e':
+    case 'f':
+    case 'g':
+    }
     int skip = 1;
     int size = 0;
     switch (**formatPtr) {
@@ -268,6 +328,7 @@ static bool writeIntIfPossible(String *string, const char **formatPtr, va_list *
     }
 
     bool isNegative = false;
+    (*formatPtr) += skip;
     char c = (*formatPtr)[skip];
     switch (tolower(c)) {
         case 'd': {
@@ -446,13 +507,19 @@ NSString *ZCFstringCreateWithFormat(NS_VALID_UNTIL_END_OF_SCOPE NSString *format
                 output.useApple = YES;
                 curr++;
             } break;
+            case 'n': {
+                // Apple seems to just skip this argument, so that's what we'll do
+                __unused int *ptr = va_arg(args, int *);
+                curr++;
+            } break;
             default: {
                 bool appendDone = writeIntIfPossible(&output, &curr, &args);
                 if (!appendDone) {
                     appendDone = writeFloatIfPossible(&output, &curr, &args);
                 }
                 if (!appendDone) {
-                    // unrecognized specifier
+                    // Format string appears malformed, which is UB, but just match Apple's treatment of the UB
+                    output.useApple = YES;
                 }
             } break;
         }
