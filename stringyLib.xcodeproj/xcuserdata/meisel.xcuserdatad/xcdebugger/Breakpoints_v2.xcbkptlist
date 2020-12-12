@@ -24,8 +24,8 @@
             filePath = "Tests/Tests.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
+            startingLineNumber = "124"
+            endingLineNumber = "124"
             landmarkName = "-testFloats"
             landmarkType = "7">
          </BreakpointContent>
@@ -40,8 +40,8 @@
             filePath = "stringyLib/stringyLib.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "348"
-            endingLineNumber = "348"
+            startingLineNumber = "352"
+            endingLineNumber = "352"
             landmarkName = "ZCFstringCreateWithFormat(format)"
             landmarkType = "9">
          </BreakpointContent>
@@ -56,8 +56,8 @@
             filePath = "Tests/Tests.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "146"
-            endingLineNumber = "146"
+            startingLineNumber = "148"
+            endingLineNumber = "148"
             landmarkName = "-testFloats"
             landmarkType = "7">
          </BreakpointContent>
@@ -95,8 +95,8 @@
             filePath = "Tests/Tests.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "232"
-            endingLineNumber = "232"
+            startingLineNumber = "237"
+            endingLineNumber = "237"
             landmarkName = "-testPerf"
             landmarkType = "7">
          </BreakpointContent>
@@ -111,8 +111,8 @@
             filePath = "stringyLib/stringyLib.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "378"
-            endingLineNumber = "378"
+            startingLineNumber = "382"
+            endingLineNumber = "382"
             landmarkName = "ZCFstringCreateWithFormat(format)"
             landmarkType = "9">
          </BreakpointContent>
@@ -129,7 +129,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "187"
             endingLineNumber = "187"
-            landmarkName = "writeLongDouble(string, formatString, f)"
+            landmarkName = "writeNumberIfPossible(string, formatPtr, args)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -159,8 +159,8 @@
             filePath = "Tests/Tests.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "231"
-            endingLineNumber = "231"
+            startingLineNumber = "236"
+            endingLineNumber = "236"
             landmarkName = "-testPerf"
             landmarkType = "7">
          </BreakpointContent>

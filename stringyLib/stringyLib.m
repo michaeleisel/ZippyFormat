@@ -265,12 +265,16 @@ static really_inline void appendNSDictionary(String *string, NSDictionary *dicti
 
 static void appendNSObject(String *string, id object, int nestLevel) {
     Class nsObjectClass = [NSObject class];
+    // To speed up class comparisons, just look at the classes in the object's class hierarchy whose depth we know to be the same as
+    // as the class we're comparing against
     Class nearTopClass = [object class];
+    Class nearNearTopClass = nil;
     while (YES) {
         Class superclass = class_getSuperclass(nearTopClass);
         if (superclass == nsObjectClass) {
             break;
         }
+        nearNearTopClass = nearTopClass;
         nearTopClass = superclass;
     }
     if (nearTopClass == [NSArray class]) {
@@ -279,7 +283,7 @@ static void appendNSObject(String *string, id object, int nestLevel) {
         appendNSDictionary(string, object, nestLevel);
     } else if (nearTopClass == [NSString class]) {
         appendNSString(string, object);
-    } else if (nearTopClass == [NSNumber class]) {
+    } else if (nearNearTopClass == [NSNumber class]) { // NSNumber -> NSValue -> NSObject
         appendNSNumber(string, object);
     } else {
         appendNSString(string, [object description]);

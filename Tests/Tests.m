@@ -61,6 +61,8 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
 - (void)testOther
 {
     TEST(@"%.02lf", (double)1.1);
+    TEST(@"%.02lf", (double)M_PI);
+    TEST(@"%1$lf", (double)M_PI);
     TEST(@"%c", 'a');
     TEST(@"%c", 'a');
     TEST(@"%s %s", "the quick brown", "fox");
@@ -106,8 +108,8 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
         int64_t num = kTestNums[i];
         testObject([NSNumber numberWithChar:num]);
         testObject([NSNumber numberWithUnsignedChar:num]);
-        testObject([NSNumber numberWithInt:num]);
-        testObject([NSNumber numberWithUnsignedInt:num]);
+        testObject([NSNumber numberWithInt:(int)num]);
+        testObject([NSNumber numberWithUnsignedInt:(unsigned int)num]);
         testObject([NSNumber numberWithInteger:num]);
         testObject([NSNumber numberWithUnsignedLongLong:num]);
         testObject([NSNumber numberWithLongLong:num]);
@@ -186,6 +188,9 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
 
 #define PERF_TEST(format, ...) \
 do { \
+    NSString *expected = [NSString stringWithFormat:format, __VA_ARGS__]; \
+    NSString *actual = ZCFstringCreateWithFormat(format, __VA_ARGS__); \
+    XCTAssert([expected isEqual:actual]); \
     int limit = 1e5; \
     NSLog(@"%@", format); \
     for (int i = 0; i < 3; i++) { \
@@ -237,6 +242,9 @@ extern CFStringEncoding __CFDefaultEightBitStringEncoding;
     PERF_TEST(@"%@%@", @"the quick brown fox ", @"jumped over the lazy dog");
     PERF_TEST(@"%s%s", "the quick brown fox ", "jumped over the lazy dog");
     PERF_TEST(@"the quick brown fox jumped over %d lazy dogs", 2500);
+    PERF_TEST(@"%@", @{@"foo": @"bar"});
+    PERF_TEST(@"%@", @[@"foo", @"bar"]);
+    PERF_TEST(@"%@", @2.5);
 }
 
 @end
