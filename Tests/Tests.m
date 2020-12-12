@@ -58,8 +58,24 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
     XCTAssert(count1 == count2);
 }
 
+- (void)testBad
+{
+    TEST(@"%d%v", 2);
+    NSString *string = @"%d😊";
+    string = [string substringWithRange:NSMakeRange(0, [string length] - 1)];
+    TEST(@"%@", string);
+    TEST(string, 2);
+    unichar chars[5];
+    [@"foo" getBytes:chars maxLength:sizeof(chars) usedLength:NULL encoding:NSUTF16StringEncoding options:0 range:NSMakeRange(0, 3) remainingRange:NULL];
+    TEST(@"%C", chars[0]);
+    TEST(@"%S", (const unichar *)chars);
+}
+
 - (void)testOther
 {
+    XCTAssert([@"" isEqual:ZCFstringCreateWithFormat(@"")]);
+    TEST(@"%@", @"");
+    TEST(@"%d%d", 1, 2);
     TEST(@"%.02lf", (double)1.1);
     TEST(@"%.02lf", (double)M_PI);
     TEST(@"%1$lf", (double)M_PI);
@@ -75,6 +91,10 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
     for (NSInteger i = 0; i < 13; i++) {
         bigString = [bigString stringByAppendingString:bigString];
         TEST(@"%@", bigString);
+        //TEST(@"%@%@%@%@", bigString, bigString, bigString, bigString);
+        NSString *expected = [NSString stringWithFormat:@"%@%@%@%@", bigString, bigString, bigString, bigString];
+        NSString *actual = ZCFstringCreateWithFormat(@"%@%@%@%@", bigString, bigString, bigString, bigString);
+        XCTAssert([expected isEqual:actual]);
     }
     TEST(@"%@", @"😊");
     const unichar chars[3] = {'a', 'b', 'c'};
