@@ -6,41 +6,6 @@
 This is only meant for 64-bit systems
 #endif
 
-@interface ZIPString : NSString
-@end
-
-@implementation ZIPString {
-    const char *_buffer;
-    NSInteger _length;
-}
-
-- (instancetype)initWithBuffer:(const char *)buffer length:(NSInteger)length
-{
-    self = [super init];
-    if (!self) {
-        return nil;
-    }
-    _buffer = buffer;
-    _length = length;
-    return self;
-}
-
-- (NSUInteger)length
-{
-    return (NSUInteger)_length;
-}
-
-- (unichar)characterAtIndex:(NSUInteger)index
-{
-}
-
-- (void)getCharacters:(unichar *)buffer range:(NSRange)range
-{
-    
-}
-
-@end
-
 typedef struct {
     char *buffer;
     NSInteger length;
@@ -312,14 +277,16 @@ NSString *ZIPStringWithFormatAndArguments(NSString *format, va_list args) {
     }
     va_end(argsCopy);
     if (output.isStack) {
-        return [[NSString alloc] init];
-        //return CFBridgingRelease(CFStringCreateWithBytes(kCFAllocatorDefault, (UInt8 *)output.buffer, output.length, kCFStringEncodingUTF8, NO));
+        return CFBridgingRelease(CFStringCreateWithBytes(kCFAllocatorDefault, (UInt8 *)output.buffer, output.length, kCFStringEncodingUTF8, NO));
     } else {
         return CFBridgingRelease(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, (UInt8 *)output.buffer, output.length, kCFStringEncodingUTF8, NO, kCFAllocatorMalloc));
     }
 }
 
-NSString *ZIPStringWithFormat(NSString *format, ...) {
+@implementation ZIPStringFactory
+
++ (NSString *)stringWithFormat:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
+{
     va_list args;
     va_start(args, format);
     NSString *string = ZIPStringWithFormatAndArguments(format, args);
@@ -327,6 +294,9 @@ NSString *ZIPStringWithFormat(NSString *format, ...) {
     return string;
 }
 
+@end
+
 NSString *smallFormattedString() {
-    return ZIPStringWithFormat(@"%@", @"foo");
+    return [ZIPStringFactory stringWithFormat:@"%@", @"foo"];
 }
+

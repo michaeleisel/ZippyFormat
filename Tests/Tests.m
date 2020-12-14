@@ -15,7 +15,7 @@
 
 - (NSString *)description
 {
-    return ZIPStringWithFormat(@"%@", @"foo");
+    return [ZIPStringFactory stringWithFormat:@"%@", @"foo"];
 }
 
 @end
@@ -32,14 +32,14 @@ const int64_t kTestNums[] = {0, 1, -1, -2, 1ULL << 63, (1ULL << 63) - 1, 1ULL <<
 
 static inline void testObject(id object) {
     NSString *expected = [NSString stringWithFormat:@"%@", object];
-    NSString *actual = ZIPStringWithFormat(@"%@", object);
+    NSString *actual = [ZIPStringFactory stringWithFormat:@"%@", object];
     XCTAssert([expected isEqual:actual]);
 }
 
 #define TEST(format, ...) \
 do { \
 NSString *expected = [NSString stringWithFormat:format, __VA_ARGS__]; \
-NSString *actual = ZIPStringWithFormat(format, __VA_ARGS__); \
+NSString *actual = [ZIPStringFactory stringWithFormat:format, __VA_ARGS__]; \
 XCTAssert([expected isEqual:actual]); \
 } while(0)
 
@@ -54,7 +54,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
     long long count1 = 1;
     [NSString stringWithFormat:@"%s%llnfoo", "quick", &count1];
     long long count2 = 1;
-    ZIPStringWithFormat(@"%s%llnfoo%d", "quick", &count2);
+    [ZIPStringFactory stringWithFormat:@"%s%llnfoo%d", "quick", &count2];
     XCTAssert(count1 == count2);
 }
 
@@ -73,7 +73,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
 
 - (void)testOther
 {
-    XCTAssert([@"" isEqual:ZIPStringWithFormat(@"")]);
+    XCTAssert([@"" isEqual:[ZIPStringFactory stringWithFormat:@""]]);
     TEST(@"%@", @"");
     TEST(@"%d%d", 1, 2);
     TEST(@"%.02lf", (double)1.1);
@@ -93,7 +93,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
         TEST(@"%@", bigString);
         //TEST(@"%@%@%@%@", bigString, bigString, bigString, bigString);
         NSString *expected = [NSString stringWithFormat:@"%@%@%@%@", bigString, bigString, bigString, bigString];
-        NSString *actual = ZIPStringWithFormat(@"%@%@%@%@", bigString, bigString, bigString, bigString);
+        NSString *actual = [ZIPStringFactory stringWithFormat:@"%@%@%@%@", bigString, bigString, bigString, bigString];
         XCTAssert([expected isEqual:actual]);
     }
     TEST(@"%@", @"😊");
@@ -141,7 +141,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
     const char *sizeSpecs[] = {"L", "l", ""};
     const char *numSpecs[] = {"a", "A", "e", "E", "f", "F", "g", "G"};
     const long double nums[] = {0, 1, -1, -2, (long double)(1ULL << 63), (long double)((1ULL << 63) - 1), (long double)(1ULL << 31), (1ULL << 31) - 1, 1ULL << 15, (1ULL << 15) - 1, 0.1, 3.1415, -0.1, FLT_MAX, DBL_MAX, FLT_MIN, DBL_MIN, LDBL_MAX, LDBL_MIN, INFINITY, -INFINITY, NAN};
-    ZIPStringWithFormat(@"%a", nums[7]);
+    [ZIPStringFactory stringWithFormat:@"%a", nums[7]];
     for (int i = 0; i < ARRAY_SIZE(sizeSpecs); i++) {
         const char *sizeSpec = sizeSpecs[i];
         for (int j = 0; j < ARRAY_SIZE(numSpecs); j++) {
@@ -152,7 +152,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
                     char *format = NULL;
                     asprintf(&format, "%%%s%s", sizeSpec, numSpec);
                     NSString *nsFormat = @(format);
-                    NSString *actual = ZIPStringWithFormat(nsFormat, num);
+                    NSString *actual = [ZIPStringFactory stringWithFormat:nsFormat, num];
                     NSString *expected = [NSString stringWithFormat:nsFormat, num];
                     // todo: investigate why Apple seems to differ incorrectly from printf for this specifier
                     if (tolower(numSpec[0]) != 'a') {
@@ -164,7 +164,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
                     char *format = NULL;
                     asprintf(&format, "%%%s%s", sizeSpec, numSpec);
                     NSString *nsFormat = @(format);
-                    NSString *actual = ZIPStringWithFormat(nsFormat, num);
+                    NSString *actual = [ZIPStringFactory stringWithFormat:nsFormat, num];
                     NSString *expected = [NSString stringWithFormat:nsFormat, num];
                     if (tolower(numSpec[0]) != 'a') {
                         XCTAssert([actual isEqual:expected]);
@@ -174,7 +174,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
                     char *format = NULL;
                     asprintf(&format, "%%%s%s", sizeSpec, numSpec);
                     NSString *nsFormat = @(format);
-                    NSString *actual = ZIPStringWithFormat(nsFormat, num);
+                    NSString *actual = [ZIPStringFactory stringWithFormat:nsFormat, num];
                     NSString *expected = [NSString stringWithFormat:nsFormat, num];
                     if (tolower(numSpec[0]) != 'a') {
                         XCTAssert([actual isEqual:expected]);
@@ -198,7 +198,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
                 char *format = NULL;
                 asprintf(&format, "%%%s%s", sizeSpec, numSpec);
                 NSString *nsFormat = @(format);
-                NSString *actual = ZIPStringWithFormat(nsFormat, num);
+                NSString *actual = [ZIPStringFactory stringWithFormat:nsFormat, num];
                 NSString *expected = [NSString stringWithFormat:nsFormat, num];
                 XCTAssert([actual isEqual:expected]);
             }
@@ -209,7 +209,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
 #define PERF_TEST(format, ...) \
 do { \
     NSString *expected = [NSString stringWithFormat:format, __VA_ARGS__]; \
-    NSString *actual = ZIPStringWithFormat(format, __VA_ARGS__); \
+    NSString *actual = [ZIPStringFactory stringWithFormat:format, __VA_ARGS__]; \
     XCTAssert([expected isEqual:actual]); \
     int limit = 1e5; \
     NSLog(@"%@", format); \
@@ -225,7 +225,7 @@ do { \
         @autoreleasepool { \
             start2 = CACurrentMediaTime(); \
             for (int j = 0; j < limit; j++) { \
-                ZIPStringWithFormat(format, __VA_ARGS__); \
+                [ZIPStringFactory stringWithFormat:format, __VA_ARGS__]; \
             } \
             end2 = CACurrentMediaTime(); \
         } \

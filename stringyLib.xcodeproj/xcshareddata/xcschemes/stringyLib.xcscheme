@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F33CAA092572BDA2004543BE"
-               BuildableName = "libstringyLib.dylib"
-               BlueprintName = "stringyLib"
+               BuildableName = "libZippyFormat.dylib"
+               BlueprintName = "ZippyFormat"
                ReferencedContainer = "container:stringyLib.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -38,6 +38,16 @@
                BlueprintIdentifier = "F33CAA1A2572BDC9004543BE"
                BuildableName = "Tests.xctest"
                BlueprintName = "Tests"
+               ReferencedContainer = "container:stringyLib.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F3466DA32587BB3C00A49ED3"
+               BuildableName = "TestsSwift.xctest"
+               BlueprintName = "TestsSwift"
                ReferencedContainer = "container:stringyLib.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -64,8 +74,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F33CAA092572BDA2004543BE"
-            BuildableName = "libstringyLib.dylib"
-            BlueprintName = "stringyLib"
+            BuildableName = "libZippyFormat.dylib"
+            BlueprintName = "ZippyFormat"
             ReferencedContainer = "container:stringyLib.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

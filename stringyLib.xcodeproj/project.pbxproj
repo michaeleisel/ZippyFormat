@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F33CAA0E2572BDA2004543BE /* stringyLib.h in Headers */ = {isa = PBXBuildFile; fileRef = F33CAA0D2572BDA2004543BE /* stringyLib.h */; };
-		F33CAA102572BDA2004543BE /* stringyLib.m in Sources */ = {isa = PBXBuildFile; fileRef = F33CAA0F2572BDA2004543BE /* stringyLib.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		F33CAA0E2572BDA2004543BE /* ZIPStringFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F33CAA0D2572BDA2004543BE /* ZIPStringFactory.h */; };
+		F33CAA102572BDA2004543BE /* ZIPStringFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F33CAA0F2572BDA2004543BE /* ZIPStringFactory.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		F33CAA1E2572BDC9004543BE /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = F33CAA1D2572BDC9004543BE /* Tests.m */; };
-		F33CAA202572BDC9004543BE /* libstringyLib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F33CAA0A2572BDA2004543BE /* libstringyLib.dylib */; };
+		F33CAA202572BDC9004543BE /* libZippyFormat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F33CAA0A2572BDA2004543BE /* libZippyFormat.dylib */; };
 		F33CAA2A2572FE45004543BE /* SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33CAA292572FE45004543BE /* SwiftTests.swift */; };
+		F3466DA72587BB3C00A49ED3 /* TestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3466DA62587BB3C00A49ED3 /* TestsSwift.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -22,17 +23,27 @@
 			remoteGlobalIDString = F33CAA092572BDA2004543BE;
 			remoteInfo = stringyLib;
 		};
+		F3466DBB2587BBA600A49ED3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F33CAA022572BDA2004543BE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F33CAA092572BDA2004543BE;
+			remoteInfo = ZippyFormat;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		F33CAA0A2572BDA2004543BE /* libstringyLib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libstringyLib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		F33CAA0D2572BDA2004543BE /* stringyLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stringyLib.h; sourceTree = "<group>"; };
-		F33CAA0F2572BDA2004543BE /* stringyLib.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = stringyLib.m; sourceTree = "<group>"; };
+		F33CAA0A2572BDA2004543BE /* libZippyFormat.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libZippyFormat.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F33CAA0D2572BDA2004543BE /* ZIPStringFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZIPStringFactory.h; sourceTree = "<group>"; };
+		F33CAA0F2572BDA2004543BE /* ZIPStringFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZIPStringFactory.m; sourceTree = "<group>"; };
 		F33CAA1B2572BDC9004543BE /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F33CAA1D2572BDC9004543BE /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		F33CAA1F2572BDC9004543BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F33CAA282572FE44004543BE /* Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Bridging-Header.h"; sourceTree = "<group>"; };
 		F33CAA292572FE45004543BE /* SwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftTests.swift; sourceTree = "<group>"; };
+		F3466DA42587BB3C00A49ED3 /* TestsSwift.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestsSwift.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3466DA62587BB3C00A49ED3 /* TestsSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestsSwift.swift; sourceTree = "<group>"; };
+		F3466DA82587BB3C00A49ED3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,7 +58,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F33CAA202572BDC9004543BE /* libstringyLib.dylib in Frameworks */,
+				F33CAA202572BDC9004543BE /* libZippyFormat.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3466DA12587BB3C00A49ED3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,8 +75,9 @@
 		F33CAA012572BDA2004543BE = {
 			isa = PBXGroup;
 			children = (
-				F33CAA0C2572BDA2004543BE /* stringyLib */,
+				F33CAA0C2572BDA2004543BE /* ZippyFormat */,
 				F33CAA1C2572BDC9004543BE /* Tests */,
+				F3466DA52587BB3C00A49ED3 /* TestsSwift */,
 				F33CAA0B2572BDA2004543BE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -66,19 +85,20 @@
 		F33CAA0B2572BDA2004543BE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F33CAA0A2572BDA2004543BE /* libstringyLib.dylib */,
+				F33CAA0A2572BDA2004543BE /* libZippyFormat.dylib */,
 				F33CAA1B2572BDC9004543BE /* Tests.xctest */,
+				F3466DA42587BB3C00A49ED3 /* TestsSwift.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F33CAA0C2572BDA2004543BE /* stringyLib */ = {
+		F33CAA0C2572BDA2004543BE /* ZippyFormat */ = {
 			isa = PBXGroup;
 			children = (
-				F33CAA0D2572BDA2004543BE /* stringyLib.h */,
-				F33CAA0F2572BDA2004543BE /* stringyLib.m */,
+				F33CAA0D2572BDA2004543BE /* ZIPStringFactory.h */,
+				F33CAA0F2572BDA2004543BE /* ZIPStringFactory.m */,
 			);
-			path = stringyLib;
+			path = ZippyFormat;
 			sourceTree = "<group>";
 		};
 		F33CAA1C2572BDC9004543BE /* Tests */ = {
@@ -92,6 +112,15 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		F3466DA52587BB3C00A49ED3 /* TestsSwift */ = {
+			isa = PBXGroup;
+			children = (
+				F3466DA62587BB3C00A49ED3 /* TestsSwift.swift */,
+				F3466DA82587BB3C00A49ED3 /* Info.plist */,
+			);
+			path = TestsSwift;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -99,16 +128,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F33CAA0E2572BDA2004543BE /* stringyLib.h in Headers */,
+				F33CAA0E2572BDA2004543BE /* ZIPStringFactory.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		F33CAA092572BDA2004543BE /* stringyLib */ = {
+		F33CAA092572BDA2004543BE /* ZippyFormat */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F33CAA132572BDA2004543BE /* Build configuration list for PBXNativeTarget "stringyLib" */;
+			buildConfigurationList = F33CAA132572BDA2004543BE /* Build configuration list for PBXNativeTarget "ZippyFormat" */;
 			buildPhases = (
 				F33CAA062572BDA2004543BE /* Headers */,
 				F33CAA072572BDA2004543BE /* Sources */,
@@ -118,9 +147,9 @@
 			);
 			dependencies = (
 			);
-			name = stringyLib;
+			name = ZippyFormat;
 			productName = stringyLib;
-			productReference = F33CAA0A2572BDA2004543BE /* libstringyLib.dylib */;
+			productReference = F33CAA0A2572BDA2004543BE /* libZippyFormat.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		F33CAA1A2572BDC9004543BE /* Tests */ = {
@@ -141,12 +170,31 @@
 			productReference = F33CAA1B2572BDC9004543BE /* Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		F3466DA32587BB3C00A49ED3 /* TestsSwift */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3466DAB2587BB3C00A49ED3 /* Build configuration list for PBXNativeTarget "TestsSwift" */;
+			buildPhases = (
+				F3466DA02587BB3C00A49ED3 /* Sources */,
+				F3466DA12587BB3C00A49ED3 /* Frameworks */,
+				F3466DA22587BB3C00A49ED3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F3466DBC2587BBA600A49ED3 /* PBXTargetDependency */,
+			);
+			name = TestsSwift;
+			productName = TestsSwift;
+			productReference = F3466DA42587BB3C00A49ED3 /* TestsSwift.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		F33CAA022572BDA2004543BE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1210;
 				LastUpgradeCheck = 1210;
 				TargetAttributes = {
 					F33CAA092572BDA2004543BE = {
@@ -155,6 +203,9 @@
 					F33CAA1A2572BDC9004543BE = {
 						CreatedOnToolsVersion = 12.1;
 						LastSwiftMigration = 1210;
+					};
+					F3466DA32587BB3C00A49ED3 = {
+						CreatedOnToolsVersion = 12.1;
 					};
 				};
 			};
@@ -171,14 +222,22 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F33CAA092572BDA2004543BE /* stringyLib */,
+				F33CAA092572BDA2004543BE /* ZippyFormat */,
 				F33CAA1A2572BDC9004543BE /* Tests */,
+				F3466DA32587BB3C00A49ED3 /* TestsSwift */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		F33CAA192572BDC9004543BE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3466DA22587BB3C00A49ED3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -192,7 +251,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F33CAA102572BDA2004543BE /* stringyLib.m in Sources */,
+				F33CAA102572BDA2004543BE /* ZIPStringFactory.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,13 +264,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F3466DA02587BB3C00A49ED3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3466DA72587BB3C00A49ED3 /* TestsSwift.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		F33CAA222572BDC9004543BE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F33CAA092572BDA2004543BE /* stringyLib */;
+			target = F33CAA092572BDA2004543BE /* ZippyFormat */;
 			targetProxy = F33CAA212572BDC9004543BE /* PBXContainerItemProxy */;
+		};
+		F3466DBC2587BBA600A49ED3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F33CAA092572BDA2004543BE /* ZippyFormat */;
+			targetProxy = F3466DBB2587BBA600A49ED3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -272,6 +344,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
+				PRODUCT_NAME = ZippyFormat;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -325,6 +398,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "";
+				PRODUCT_NAME = ZippyFormat;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -396,6 +470,51 @@
 			};
 			name = Release;
 		};
+		F3466DA92587BB3C00A49ED3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F53BR3BJXH;
+				INFOPLIST_FILE = TestsSwift/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = eiselz.TestsSwift;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F3466DAA2587BB3C00A49ED3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F53BR3BJXH;
+				INFOPLIST_FILE = TestsSwift/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = eiselz.TestsSwift;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -408,7 +527,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F33CAA132572BDA2004543BE /* Build configuration list for PBXNativeTarget "stringyLib" */ = {
+		F33CAA132572BDA2004543BE /* Build configuration list for PBXNativeTarget "ZippyFormat" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F33CAA142572BDA2004543BE /* Debug */,
@@ -422,6 +541,15 @@
 			buildConfigurations = (
 				F33CAA242572BDC9004543BE /* Debug */,
 				F33CAA252572BDC9004543BE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3466DAB2587BB3C00A49ED3 /* Build configuration list for PBXNativeTarget "TestsSwift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3466DA92587BB3C00A49ED3 /* Debug */,
+				F3466DAA2587BB3C00A49ED3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

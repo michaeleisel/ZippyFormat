@@ -111,8 +111,8 @@
             filePath = "stringyLib/stringyLib.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "89"
-            endingLineNumber = "89"
+            startingLineNumber = "54"
+            endingLineNumber = "54"
             landmarkName = "appendString(string, src, length)"
             landmarkType = "9">
          </BreakpointContent>
