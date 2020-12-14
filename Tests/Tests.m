@@ -6,7 +6,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "stringyLib.h"
+#import <ZippyFormat/ZippyFormat.h>
 
 @interface CustomObject : NSObject
 @end

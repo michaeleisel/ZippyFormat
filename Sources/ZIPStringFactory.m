@@ -1,6 +1,6 @@
-#import "stringyLib.h"
-
 #import <Foundation/Foundation.h>
+
+#import "ZippyFormat.h"
 
 #ifndef __LP64__
 This is only meant for 64-bit systems
