@@ -108,6 +108,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
 
 - (void)testObjects
 {
+    testObject(nil);
     testObject([@"asdf" dataUsingEncoding:NSUTF8StringEncoding]);
     testObject([[CustomObject alloc] init]);
     testObject([NSNumber numberWithChar:-1]);
@@ -141,7 +142,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
     const char *sizeSpecs[] = {"L", "l", ""};
     const char *numSpecs[] = {"a", "A", "e", "E", "f", "F", "g", "G"};
     const long double nums[] = {0, 1, -1, -2, (long double)(1ULL << 63), (long double)((1ULL << 63) - 1), (long double)(1ULL << 31), (1ULL << 31) - 1, 1ULL << 15, (1ULL << 15) - 1, 0.1, 3.1415, -0.1, FLT_MAX, DBL_MAX, FLT_MIN, DBL_MIN, LDBL_MAX, LDBL_MIN, INFINITY, -INFINITY, NAN};
-    [ZIPStringFactory stringWithFormat:@"%a", nums[7]];
+    [ZIPStringFactory stringWithFormat:@"%a", (double)nums[7]];
     for (int i = 0; i < ARRAY_SIZE(sizeSpecs); i++) {
         const char *sizeSpec = sizeSpecs[i];
         for (int j = 0; j < ARRAY_SIZE(numSpecs); j++) {
@@ -229,7 +230,8 @@ do { \
             } \
             end2 = CACurrentMediaTime(); \
         } \
-        NSLog(@"mult:  %@", @((end1 - start1) / (end2 - start2))); \
+        /*NSLog(@"mult:  %@", @((end1 - start1) / (end2 - start2))); */\
+        NSLog(@"apple: %@, zippy: %@", @(1 / ((end1 - start1) / limit)), @(1 / ((end2 - start2) / limit))); \
     } \
 } while(0)
 
@@ -265,6 +267,8 @@ extern CFStringEncoding __CFDefaultEightBitStringEncoding;
     PERF_TEST(@"%@", @{@"foo": @"bar"});
     PERF_TEST(@"%@", @[@"foo", @"bar"]);
     PERF_TEST(@"%@", @2.5);
+    NSString *hugeString = @"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    PERF_TEST(@"%@%@%@%@", hugeString, hugeString, hugeString, hugeString);
 }
 
 @end

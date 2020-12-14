@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 
 #import "ZippyFormat.h"
+#import <objc/runtime.h>
 
 #ifndef __LP64__
 This is only meant for 64-bit systems
@@ -62,7 +63,7 @@ static void appendChar(String *string, char c) {
     string->length++;
 }
 
-static bool writeNumberIfPossible(String *string, const char **formatPtr, va_list args) {
+static bool writeNumberIfPossible(String *string, const char **formatPtr, va_list *args) {
     const char *format = *formatPtr;
     while (true) {
         char c = *format;
@@ -73,7 +74,7 @@ static bool writeNumberIfPossible(String *string, const char **formatPtr, va_lis
         char lower = tolower(c);
         if (lower == 'a' || lower == 'e' || lower == 'f' || lower == 'g' || lower == 'd' || lower == 'i' || lower == 'u' || lower == 'o' || lower == 'x' || lower == 'c' || lower == 'p' || lower == 'n') {
             if (lower == 'n') {
-                va_arg(args, void *);
+                va_arg(*args, void *);
                 *formatPtr = format + 1;
                 return true;
             }
@@ -138,27 +139,43 @@ static inline void appendNSNumber(String *string, NSNumber *number) {
 static inline void appendNSArray(String *string, NSArray *array, int nestLevel);
 static inline void appendNSDictionary(String *string, NSDictionary *dictionary, int nestLevel);
 
+static Class nsObjectClass;
+static Class nsStringClass;
+static Class nsArrayClass;
+static Class nsDictionaryClass;
+static Class nsNumberClass;
+
 static void appendNSObject(String *string, id object, int nestLevel) {
-    Class nsObjectClass = [NSObject class];
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        nsObjectClass = [NSObject class];
+        nsStringClass = [NSString class];
+        nsArrayClass = [NSArray class];
+        nsDictionaryClass = [NSDictionary class];
+        nsNumberClass = [NSNumber class];
+    });
+    if (!object) {
+        APPEND_LITERAL(string, "(null)");
+    }
     // To speed up class comparisons, just look at the classes in the object's class hierarchy whose depth we know to be the same as
     // as the class we're comparing against
     Class nearTopClass = [object class];
     Class nearNearTopClass = nil;
     while (YES) {
-        Class superclass = [nearTopClass superclass];
+        Class superclass = class_getSuperclass(nearTopClass);
         if (superclass == nsObjectClass || superclass == nil) { // superclass == nil if the root class here is, e.g., NSProxy
             break;
         }
         nearNearTopClass = nearTopClass;
         nearTopClass = superclass;
     }
-    if (nearTopClass == [NSArray class]) {
+    if (nearTopClass == nsArrayClass) {
         appendNSArray(string, object, nestLevel);
-    } else if (nearTopClass == [NSDictionary class]) {
+    } else if (nearTopClass == nsDictionaryClass) {
         appendNSDictionary(string, object, nestLevel);
-    } else if (nearTopClass == [NSString class]) {
+    } else if (nearTopClass == nsStringClass) {
         appendNSString(string, object);
-    } else if (nearNearTopClass == [NSNumber class]) { // NSNumber -> NSValue -> NSObject
+    } else if (nearNearTopClass == nsNumberClass) { // NSNumber -> NSValue -> NSObject
         appendNSNumber(string, object);
     } else {
         appendNSString(string, [object description]);
@@ -205,14 +222,14 @@ static inline void appendNSArray(String *string, NSArray *array, int nestLevel) 
     appendChar(string, ')');
 }
 
-static void appendObject(String *string, va_list args) {
-    id object = va_arg(args, id);
+static void appendObject(String *string, va_list *args) {
+    id object = va_arg(*args, id);
     appendNSObject(string, object, 0);
 }
 
-NSString *ZIPStringWithFormatAndArguments(NSString *format, va_list args) {
+NSString *ZIPStringWithFormatAndArguments(NSString *format, va_list *args) {
     va_list argsCopy;
-    va_copy(argsCopy, args);
+    va_copy(argsCopy, *args);
     const NSInteger initialOutputCapacity = 500;
     char stackString[initialOutputCapacity];
     String output = stringCreate(stackString, initialOutputCapacity);
@@ -249,7 +266,7 @@ NSString *ZIPStringWithFormatAndArguments(NSString *format, va_list args) {
                 curr++;
             } break;
             case 's': {
-                const char *str = va_arg(args, char *);
+                const char *str = va_arg(*args, char *);
                 appendString(&output, str, strlen(str));
                 curr++;
             } break;
@@ -289,7 +306,7 @@ NSString *ZIPStringWithFormatAndArguments(NSString *format, va_list args) {
 {
     va_list args;
     va_start(args, format);
-    NSString *string = ZIPStringWithFormatAndArguments(format, args);
+    NSString *string = ZIPStringWithFormatAndArguments(format, &args);
     va_end(args);
     return string;
 }

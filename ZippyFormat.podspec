@@ -16,6 +16,7 @@ ZippyFormat is a fast (2.5-4x speed) drop-in replacement for +[NSString stringWi
   s.osx.deployment_target = '10.13'
 
   s.source_files = 'Sources/**/*.{h,hh,mm,m,c,cpp}'
+  s.requires_arc = false
 
   s.test_spec 'Tests' do |test_spec|
     # test_spec.requires_app_host = true

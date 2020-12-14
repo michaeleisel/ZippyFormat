@@ -1,0 +1,29 @@
+The data was collected for the following tests (the order of the tests matches the order of the data)
+
+Tests, from Tests.m:
+    PERF_TEST(@"%d", 2);
+    PERF_TEST(@"%Lf", (long double)M_PI);
+    PERF_TEST(@"%@", @"short");
+    PERF_TEST(@"%@", @"the quick brown fox jumped over the lazy dog");
+    PERF_TEST(@"%@%@", @"the quick brown fox ", @"jumped over the lazy dog");
+    PERF_TEST(@"%s%s", "the quick brown fox ", "jumped over the lazy dog");
+    PERF_TEST(@"the quick brown fox jumped over %d lazy dogs", 2500);
+    PERF_TEST(@"%@", @{@"foo": @"bar"});
+    PERF_TEST(@"%@", @[@"foo", @"bar"]);
+    PERF_TEST(@"%@", @2.5);
+    NSString *hugeString = @"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    PERF_TEST(@"%@%@%@%@", hugeString, hugeString, hugeString, hugeString);
+
+Data:
+Format	Apple Time	ZippyFormat Time
+one_int	2127085	7967108
+one_long_double	1774610	4278528
+short_string	2246189	9161073
+long_string	1729259	3957636
+two_strings	1562660	3142894
+two_c_strings	1541570	4367732
+int_long_string	1403588	3490133
+dictionary	615871	1981848
+array	608960	1980525
+nsnumber	706013	2592423
+huge_string	572223	1511433
