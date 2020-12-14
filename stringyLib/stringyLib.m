@@ -6,6 +6,41 @@
 This is only meant for 64-bit systems
 #endif
 
+@interface ZIPString : NSString
+@end
+
+@implementation ZIPString {
+    const char *_buffer;
+    NSInteger _length;
+}
+
+- (instancetype)initWithBuffer:(const char *)buffer length:(NSInteger)length
+{
+    self = [super init];
+    if (!self) {
+        return nil;
+    }
+    _buffer = buffer;
+    _length = length;
+    return self;
+}
+
+- (NSUInteger)length
+{
+    return (NSUInteger)_length;
+}
+
+- (unichar)characterAtIndex:(NSUInteger)index
+{
+}
+
+- (void)getCharacters:(unichar *)buffer range:(NSRange)range
+{
+    
+}
+
+@end
+
 typedef struct {
     char *buffer;
     NSInteger length;
@@ -62,7 +97,7 @@ static void appendChar(String *string, char c) {
     string->length++;
 }
 
-static bool writeNumberIfPossible(String *string, const char **formatPtr, va_list *args) {
+static bool writeNumberIfPossible(String *string, const char **formatPtr, va_list args) {
     const char *format = *formatPtr;
     while (true) {
         char c = *format;
@@ -73,7 +108,7 @@ static bool writeNumberIfPossible(String *string, const char **formatPtr, va_lis
         char lower = tolower(c);
         if (lower == 'a' || lower == 'e' || lower == 'f' || lower == 'g' || lower == 'd' || lower == 'i' || lower == 'u' || lower == 'o' || lower == 'x' || lower == 'c' || lower == 'p' || lower == 'n') {
             if (lower == 'n') {
-                va_arg(*args, void *);
+                va_arg(args, void *);
                 *formatPtr = format + 1;
                 return true;
             }
@@ -83,7 +118,7 @@ static bool writeNumberIfPossible(String *string, const char **formatPtr, va_lis
             tempFormat[length - 1] = '\0';
             const int shortDestinationLength = 64;
             char shortDestination[shortDestinationLength];
-            int needed = vsnprintf(shortDestination, shortDestinationLength, tempFormat, *args);
+            int needed = vsnprintf(shortDestination, shortDestinationLength, tempFormat, args);
             if (needed < shortDestinationLength) { // If needed == destinationLength, the null terminator is the issue
                 appendString(string, shortDestination, needed);
                 *formatPtr = format + 1;
@@ -146,7 +181,7 @@ static void appendNSObject(String *string, id object, int nestLevel) {
     Class nearNearTopClass = nil;
     while (YES) {
         Class superclass = [nearTopClass superclass];
-        if (superclass == nsObjectClass) {
+        if (superclass == nsObjectClass || superclass == nil) { // superclass == nil if the root class here is, e.g., NSProxy
             break;
         }
         nearNearTopClass = nearTopClass;
@@ -205,15 +240,13 @@ static inline void appendNSArray(String *string, NSArray *array, int nestLevel) 
     appendChar(string, ')');
 }
 
-static void appendObject(String *string, va_list *args) {
-    id object = va_arg(*args, id);
+static void appendObject(String *string, va_list args) {
+    id object = va_arg(args, id);
     appendNSObject(string, object, 0);
 }
 
-NSString *ZCFstringCreateWithFormat(NS_VALID_UNTIL_END_OF_SCOPE NSString *format, ...) {
-    va_list args;
+NSString *ZIPStringWithFormatAndArguments(NSString *format, va_list args) {
     va_list argsCopy;
-    va_start(args, format);
     va_copy(argsCopy, args);
     const NSInteger initialOutputCapacity = 500;
     char stackString[initialOutputCapacity];
@@ -239,7 +272,7 @@ NSString *ZCFstringCreateWithFormat(NS_VALID_UNTIL_END_OF_SCOPE NSString *format
         curr = next + 1;
         switch (*curr) {
             case '@':
-                appendObject(&output, &args);
+                appendObject(&output, args);
                 curr++;
                 break;
             case '%':
@@ -261,7 +294,7 @@ NSString *ZCFstringCreateWithFormat(NS_VALID_UNTIL_END_OF_SCOPE NSString *format
             } break;
             default: {
                 // This function assumes it's at the end, cannot have any legitimate cases after it
-                bool appendDone = writeNumberIfPossible(&output, &curr, &args);
+                bool appendDone = writeNumberIfPossible(&output, &curr, args);
                 if (!appendDone) {
                     // Format string appears malformed, which is UB, but just match Apple's treatment of the UB
                     output.useApple = YES;
@@ -272,18 +305,28 @@ NSString *ZCFstringCreateWithFormat(NS_VALID_UNTIL_END_OF_SCOPE NSString *format
             break;
         }
     }
-    va_end(args);
     if (output.useApple) {
-        return [[NSString alloc] initWithFormat:format arguments:argsCopy];
+        NSString *string = [[NSString alloc] initWithFormat:format arguments:argsCopy];
+        va_end(argsCopy);
+        return string;
     }
     va_end(argsCopy);
     if (output.isStack) {
-        return CFBridgingRelease(CFStringCreateWithBytes(kCFAllocatorDefault, (UInt8 *)output.buffer, output.length, kCFStringEncodingUTF8, NO));
+        return [[NSString alloc] init];
+        //return CFBridgingRelease(CFStringCreateWithBytes(kCFAllocatorDefault, (UInt8 *)output.buffer, output.length, kCFStringEncodingUTF8, NO));
     } else {
         return CFBridgingRelease(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, (UInt8 *)output.buffer, output.length, kCFStringEncodingUTF8, NO, kCFAllocatorMalloc));
     }
 }
 
+NSString *ZIPStringWithFormat(NSString *format, ...) {
+    va_list args;
+    va_start(args, format);
+    NSString *string = ZIPStringWithFormatAndArguments(format, args);
+    va_end(args);
+    return string;
+}
+
 NSString *smallFormattedString() {
-    return ZCFstringCreateWithFormat(@"%@", @"foo");
+    return ZIPStringWithFormat(@"%@", @"foo");
 }
