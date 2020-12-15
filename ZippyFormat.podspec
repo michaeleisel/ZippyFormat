@@ -1,10 +1,10 @@
 Pod::Spec.new do |s|
   s.name             = 'ZippyFormat'
   s.version          = '1.0.0'
-  s.summary          = 'A 2.5x+ speed, drop-in replacement for +[NSString stringWithFormat:]'
+  s.summary          = 'A faster version of +[NSString stringWithFormat:]'
 
   s.description      = <<-DESC
-ZippyFormat is a fast (2.5-4x speed) drop-in replacement for +[NSString stringWithFormat:]
+ZippyFormat is a fast drop-in replacement for +[NSString stringWithFormat:]
                        DESC
 
   s.homepage         = 'https://github.com/michaeleisel/ZippyJSON'
