@@ -17,7 +17,7 @@ Just add `#import <ZippyFormat/ZippyFormat.h>` at the top of the file and replac
 
 - NSString grows an NSMutableString (or at least, its CoreFoundation relative) to create the string, whereas ZippyFormat appends directly into a `char *` buffer and only creates an NSString from it at the very end
     - ZippyFormat is able to use the stack for the `char *` up to a point, avoiding intermediate heap allocations that NSMutableString would make, since NSMutableString is always prepared to be used outside of its initial scope
-    - Appends formatted arguments into the `char *` without performing validation because it already knows the data is valid UTF-8). NSMutableString's methods, on the other hand, are generic for other use cases and make fewer assumptions about the incoming bytes. This means additional unnecessary validation
+    - Appends formatted arguments into the `char *` without performing validation because it already knows the data is valid UTF-8. NSMutableString's methods, on the other hand, are generic for other use cases and make fewer assumptions about the incoming bytes. This means additional unnecessary validation.
 - For `%@` arguments, NSString just appends `[object description]`. However, objects passed to debugging statements often consist of one of just a few classes (NSNumber, NSDictionary, NSArray, etc.). For these cases, ZippyFormat "inlines" the appending of the description by just copying the output it knows that it would consist of to the buffer, and doesn't call `[object description]` at all.
 
 So, it's largely due to Apple trying to be elegant and operate at a higher level.
