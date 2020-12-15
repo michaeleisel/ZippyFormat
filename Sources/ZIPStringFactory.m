@@ -84,7 +84,38 @@ static bool writeNumberIfPossible(String *string, const char **formatPtr, va_lis
             tempFormat[length - 1] = '\0';
             const int shortDestinationLength = 64;
             char shortDestination[shortDestinationLength];
-            int needed = vsnprintf(shortDestination, shortDestinationLength, tempFormat, args);
+            int needed = 0;
+            char prev = format[-1];
+            if (lower == 'd' || lower == 'i' || lower == 'u' || lower == 'o' || lower == 'x') {
+                if (prev == 'l') {
+                    if (format[-2] == 'l') {
+                        needed = snprintf(shortDestination, shortDestinationLength, tempFormat, va_arg(*args, long long int));
+                    } else {
+                        needed = snprintf(shortDestination, shortDestinationLength, tempFormat, va_arg(*args, long int));
+                    }
+                } else if (prev == 'q') {
+                    needed = snprintf(shortDestination, shortDestinationLength, tempFormat, va_arg(*args, long long));
+                } else if (prev == 'j') {
+                    needed = snprintf(shortDestination, shortDestinationLength, tempFormat, va_arg(*args, intmax_t));
+                } else if (prev == 'z') {
+                    needed = snprintf(shortDestination, shortDestinationLength, tempFormat, va_arg(*args, size_t));
+                } else if (prev == 't') {
+                    needed = snprintf(shortDestination, shortDestinationLength, tempFormat, va_arg(*args, ptrdiff_t));
+                } else {
+                    // Handles h and hh, and char and short get promoted to int anyways
+                    needed = snprintf(shortDestination, shortDestinationLength, tempFormat, va_arg(*args, int));
+                }
+            } else if (lower == 'f' || lower == 'e' || lower == 'g' || lower == 'a') {
+                if (prev == 'L') {
+                    needed = snprintf(shortDestination, shortDestinationLength, tempFormat, va_arg(*args, long double));
+                } else {
+                    needed = snprintf(shortDestination, shortDestinationLength, tempFormat, va_arg(*args, double));
+                }
+            } else if (lower == 'c') {
+                needed = snprintf(shortDestination, shortDestinationLength, tempFormat, va_arg(*args, int)); // char
+            } else {
+                needed = snprintf(shortDestination, shortDestinationLength, tempFormat, va_arg(*args, void *));
+            }
             if (needed < shortDestinationLength) { // If needed == destinationLength, the null terminator is the issue
                 appendString(string, shortDestination, needed);
                 *formatPtr = format + 1;
