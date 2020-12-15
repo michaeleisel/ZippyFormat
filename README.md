@@ -7,7 +7,7 @@
 
 <img src="misc/chart.svg" width="75%">
 
-These benchmarks were done on a Mac. The results are similar on the iPhone, but slightly slower. Note there are a few cases (positional arguments, `%S`, `%C`, malformed input) where ZippyFormat falls back calling Apple's version. These cases, however, seem very uncommon for typical usage (e.g. localized strings with positional arguments would typically use`NSLocalizedString` instead). For more info, see [here]("misc/benchmarks.txt").
+These benchmarks were done on an iPhone XS. The results on Mac are very similar. Note there are a few cases (positional arguments, `%S`, `%C`, malformed input) where ZippyFormat falls back to calling Apple's version. These cases, however, seem very uncommon for typical usage (e.g. localized strings with positional arguments would typically use`NSLocalizedString` instead). For more info, see [here]("misc/benchmarks.txt").
 
 ## Usage
 
