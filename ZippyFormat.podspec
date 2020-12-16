@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
 ZippyFormat is a fast drop-in replacement for +[NSString stringWithFormat:]
                        DESC
 
-  s.homepage         = 'https://github.com/michaeleisel/ZippyJSON'
+  s.homepage         = 'https://github.com/michaeleisel/ZippyFormat'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'michaeleisel' => 'michael.eisel@gmail.com' }
   s.source           = { :git => 'https://github.com/michaeleisel/ZippyFormat.git', :tag => s.version.to_s }

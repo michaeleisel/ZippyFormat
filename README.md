@@ -1,5 +1,5 @@
 # ZippyFormat
-## A faster version of [NSString stringWithFormat:]
+## A faster version of +stringWithFormat:
 ![Coverage: 99%](https://img.shields.io/static/v1?label=coverage&message=96%&color=brightgreen)
 [![Cocoapods compatible](https://img.shields.io/badge/Cocoapods-compatible-4BC51D.svg?style=flat)](https://cocoapods.com)
 
