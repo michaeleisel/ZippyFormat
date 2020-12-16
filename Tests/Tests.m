@@ -31,9 +31,9 @@ do { \
     NSString *expected = [NSString stringWithFormat:format, __VA_ARGS__]; \
     NSString *actual = [ZIPStringFactory stringWithFormat:format, __VA_ARGS__]; \
     XCTAssert([expected isEqual:actual]); \
-    int limit = 1e5; \
+    int limit = 5e4; \
     NSLog(@"%@", format); \
-    for (int i = 0; i < 3; i++) { \
+    for (int i = 0; i < 2; i++) { \
         CFTimeInterval start1, start2, end1, end2; \
         @autoreleasepool { \
             start1 = CACurrentMediaTime(); \
@@ -121,6 +121,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
     // Other
     ({
         XCTAssert([@"" isEqual:[ZIPStringFactory stringWithFormat:@""]]);
+        TEST(@"%2$d, %1$@", @"foo", 2);
         TEST(@"%@", @"");
         TEST(@"%d%d", 1, 2);
         TEST(@"%.02lf", (double)1.1);
