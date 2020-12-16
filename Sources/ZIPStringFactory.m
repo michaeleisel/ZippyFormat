@@ -343,8 +343,3 @@ NSString *ZIPStringWithFormatAndArguments(NSString *format, va_list *args) {
 }
 
 @end
-
-NSString *smallFormattedString() {
-    return [ZIPStringFactory stringWithFormat:@"%@", @"foo"];
-}
-
