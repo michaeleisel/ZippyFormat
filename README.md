@@ -33,6 +33,8 @@ it, simply add the following line to your Podfile:
 pod 'ZippyFormat'
 ```
 
+Note that since this is a new repo and Cocoapods can be slow at propagating changes, you may need to switch to their [CDN](https://blog.cocoapods.org/CocoaPods-1.7.2/) if you aren't using it already and if the project isn't being found.
+
 ### Manually
 
 ZippyFormat is just a few files, with no nested import structure or anything, so just copying the files in is pretty easy.
