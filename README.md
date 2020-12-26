@@ -11,7 +11,7 @@ These benchmarks were done on an iPhone XS. The results on Mac are very similar.
 
 ## Usage
 
-Just add `#import <ZippyFormat/ZippyFormat.h>` at the top of the file and replace `[NSString stringWithFormat:...]` with `[ZIPStringFormat stringWithFormat:...]` wherever you want to use it.
+Just add `#import <ZippyFormat/ZippyFormat.h>` at the top of the file and replace `[NSString stringWithFormat:...]` with `[ZIPStringFactory stringWithFormat:...]` wherever you want to use it.
 
 ## Why is it so much faster?
 
