@@ -319,7 +319,10 @@ NSString *ZIPStringWithFormatAndArguments(NSString *format, va_list *args) {
         }
     }
     if (output.useApple) {
-        NSString *string = [[NSString alloc] initWithFormat:format arguments:argsCopy];
+        if (!output.isStack) {
+            free(output.buffer);
+        }
+        NSString *string = [[[NSString alloc] initWithFormat:format arguments:argsCopy] autorelease];
         va_end(argsCopy);
         return string;
     }

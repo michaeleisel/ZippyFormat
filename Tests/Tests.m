@@ -93,6 +93,13 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
 
 - (void)testAll
 {
+    @autoreleasepool {
+        [self runAllTests];
+    }
+}
+
+- (void)runAllTests
+{
     ({
         ({
             long long count = 0;
@@ -139,6 +146,8 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
         for (NSInteger i = 0; i < 13; i++) {
             bigString = [bigString stringByAppendingString:bigString];
             TEST(@"%@", bigString);
+            NSString *nsFormat = [NSString stringWithFormat:@"%@%%1$d", bigString];
+            TEST(nsFormat, 3);
             //TEST(@"%@%@%@%@", bigString, bigString, bigString, bigString);
             NSString *expected = [NSString stringWithFormat:@"%@%@%@%@", bigString, bigString, bigString, bigString];
             NSString *actual = [ZIPStringFactory stringWithFormat:@"%@%@%@%@", bigString, bigString, bigString, bigString];
@@ -150,7 +159,9 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
         for (int i = 0; i < ARRAY_SIZE(encodings); i++) {
             NSStringEncoding encoding = encodings[i];
             NSData *data = [@"the quick brown 😊 😊" dataUsingEncoding:encoding];
-            TEST(@"%@", [[NSString alloc] initWithBytes:[data bytes] length:[data length] encoding:encoding]);
+            if (data) {
+                TEST(@"%@", [[NSString alloc] initWithBytes:[data bytes] length:[data length] encoding:encoding]);
+            }
         }
     });
 
@@ -198,9 +209,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
                 for (int k = 0; k < ARRAY_SIZE(nums); k++) {
                     if (strcmp(sizeSpec, "L") == 0) {
                         long double num = nums[k];
-                        char *format = NULL;
-                        asprintf(&format, "%%%s%s", sizeSpec, numSpec);
-                        NSString *nsFormat = @(format);
+                        NSString *nsFormat = [NSString stringWithFormat:@"%%%s%s", sizeSpec, numSpec];
                         NSString *actual = [ZIPStringFactory stringWithFormat:nsFormat, num];
                         NSString *expected = [NSString stringWithFormat:nsFormat, num];
                         // todo: investigate why Apple seems to differ incorrectly from printf for this specifier
@@ -210,9 +219,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
                         }
                     } else if (strcmp(sizeSpec, "l") == 0) {
                         double num = nums[k];
-                        char *format = NULL;
-                        asprintf(&format, "%%%s%s", sizeSpec, numSpec);
-                        NSString *nsFormat = @(format);
+                        NSString *nsFormat = [NSString stringWithFormat:@"%%%s%s", sizeSpec, numSpec];
                         NSString *actual = [ZIPStringFactory stringWithFormat:nsFormat, num];
                         NSString *expected = [NSString stringWithFormat:nsFormat, num];
                         if (tolower(numSpec[0]) != 'a') {
@@ -220,9 +227,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
                         }
                     } else { // float
                         float num = nums[k];
-                        char *format = NULL;
-                        asprintf(&format, "%%%s%s", sizeSpec, numSpec);
-                        NSString *nsFormat = @(format);
+                        NSString *nsFormat = [NSString stringWithFormat:@"%%%s%s", sizeSpec, numSpec];
                         NSString *actual = [ZIPStringFactory stringWithFormat:nsFormat, num];
                         NSString *expected = [NSString stringWithFormat:nsFormat, num];
                         if (tolower(numSpec[0]) != 'a') {
@@ -244,9 +249,7 @@ const NSStringEncoding encodings[] = {NSASCIIStringEncoding, NSNEXTSTEPStringEnc
                 const char *numSpec = numSpecs[j];
                 for (int k = 0; k < ARRAY_SIZE(kTestNums); k++) {
                     int64_t num = kTestNums[k];
-                    char *format = NULL;
-                    asprintf(&format, "%%%s%s", sizeSpec, numSpec);
-                    NSString *nsFormat = @(format);
+                    NSString *nsFormat = [NSString stringWithFormat:@"%%%s%s", sizeSpec, numSpec];
                     NSString *actual = [ZIPStringFactory stringWithFormat:nsFormat, num];
                     NSString *expected = [NSString stringWithFormat:nsFormat, num];
                     XCTAssert([actual isEqual:expected]);

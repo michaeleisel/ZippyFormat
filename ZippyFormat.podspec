@@ -20,6 +20,7 @@ ZippyFormat is a fast drop-in replacement for +[NSString stringWithFormat:]
 
   s.test_spec 'Tests' do |test_spec|
     # test_spec.requires_app_host = true
+    test_spec.requires_arc = true
     test_spec.source_files = 'Tests/**/*.{swift,h,m}'
   end
 end
